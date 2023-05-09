@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author TODO Bitte Gruppenmitglieder eintragen!
+ * @author Valentin Zahrhuber, Lukas Schneglberger
  */
 public class Graph {
 

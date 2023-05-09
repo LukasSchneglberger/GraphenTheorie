@@ -1,5 +1,5 @@
 /*
- * @author TODO Bitte Gruppenmitglieder eintragen!
+ * @author Valentin Zahrhuber, Lukas Schneglberger
  */
 public class Edge {
     
