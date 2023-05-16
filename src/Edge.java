@@ -1,9 +1,13 @@
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 /*
  * @author Valentin Zahrhuber, Lukas Schneglberger
  */
 @Data
+@AllArgsConstructor
+@ToString
 public class Edge {
 
     private int distance;
@@ -17,5 +21,7 @@ public class Edge {
     public int getSecondNodeId() {
         return end.getNodeId();
     }
+
+
     
 }

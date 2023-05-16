@@ -1,6 +1,7 @@
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * @author Valentin Zahrhuber, Lukas Schneglberger
@@ -17,7 +18,36 @@ public class Graph {
      *@param adjacencyMatrix Graph as adjacency matrix.
      */
     public void read(File adjacencyMatrix) {
-        
+        List<Edge> edges = new ArrayList<>();
+        String distance= null;
+        int start;
+        int end;
+        try {
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(adjacencyMatrix.getAbsolutePath())));
+            String[] firstRow = br.readLine().split(";");
+            for (int i = 1; i < firstRow.length+1; i++) {
+                for (int j = 0; j < firstRow.length+1; j++) {
+                    String[] row = br.readLine().split(";");
+                    if(!(row[j].equals("0"))){
+                        distance = row[j];
+                        start = i;
+                        end = j;
+                        Node node1 = new Node();
+                        node1.setNodeId(start);
+                        Node node2 = new Node();
+                        node2.setNodeId(end);
+                        Edge edge = new Edge(Integer.parseInt(distance), node1, node2);
+                        edges.add(edge);
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        edges.forEach(System.out::println);
     }
 
     /**
