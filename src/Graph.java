@@ -17,7 +17,7 @@ public class Graph {
      *@param adjacencyMatrix Graph as adjacency matrix.
      */
     public void read(File adjacencyMatrix) {
-
+        
     }
 
     /**
