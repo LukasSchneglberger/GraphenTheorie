@@ -7,7 +7,6 @@ import lombok.ToString;
  */
 @Data
 @AllArgsConstructor
-@ToString
 public class Edge {
 
     private int distance;
@@ -23,5 +22,12 @@ public class Edge {
     }
 
 
-    
+    @Override
+    public String toString() {
+        return "Edge{" +
+                "distance=" + distance +
+                ", start=" + start.getNodeId() +
+                ", end=" + end.getNodeId() +
+                '}';
+    }
 }

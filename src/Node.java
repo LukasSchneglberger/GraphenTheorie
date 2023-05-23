@@ -15,8 +15,14 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class Node {
-
-    private List<Edge> edges;
+    private List<Edge> edges = new ArrayList<>();
     private int nodeId;
-    
+
+    public Node(int nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public void addEdge(Edge edge) {
+        edges.add(edge);
+    }
 }
