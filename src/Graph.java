@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -27,8 +28,14 @@ public class Graph {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(adjacencyMatrix.getAbsolutePath())));
             String[] firstRow = br.readLine().split(";");
             for (int i = 1; i < firstRow.length+1; i++) {
-                for (int j = 0; j < firstRow.length+1; j++) {
-                    String[] row = br.readLine().split(";");
+                String line = br.readLine();
+                if(line == null) {
+                    return;
+                }
+                String[] row = line.split(";");
+
+                for (int j = 1; j < row.length; j++) {
+
                     if(!(row[j].equals("0"))){
                         distance = row[j];
                         start = i;
@@ -39,6 +46,8 @@ public class Graph {
                         node2.setNodeId(end);
                         Edge edge = new Edge(Integer.parseInt(distance), node1, node2);
                         edges.add(edge);
+
+                        System.out.println(edge.toString());
                     }
                 }
             }

@@ -1,5 +1,6 @@
 import jdk.jfr.DataAmount;
 import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -18,5 +19,7 @@ public class Node {
 
     private List<Edge> edges;
     private int nodeId;
+
+
     
 }
