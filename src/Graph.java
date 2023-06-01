@@ -1,15 +1,13 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 /**
  * @author Valentin Zahrhuber, Lukas Schneglberger
  */
 public class Graph {
-
-    private List<Node> nodes = new ArrayList<>();
 
     public Graph() {
 
@@ -20,36 +18,45 @@ public class Graph {
      *
      *@param adjacencyMatrix Graph as adjacency matrix.
      */
-    public void read(File adjacencyMatrix) throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File("Linz_Suchproblem.csv"));
-        int size = 57;
-        System.out.println(scanner.next());
+    public void read(File adjacencyMatrix) {
+        List<Edge> edges = new ArrayList<>();
+        String distance= null;
+        int start;
+        int end;
+        try {
 
-        for (int i = 0; i < size; i++) {
-            nodes.add(new Node(i));
-        }
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(adjacencyMatrix.getAbsolutePath())));
+            String[] firstRow = br.readLine().split(";");
+            for (int i = 1; i < firstRow.length+1; i++) {
+                String line = br.readLine();
+                if(line == null) {
+                    return;
+                }
+                String[] row = line.split(";");
 
-        for (int i = 1; i < 57; i++) {
-            for (int j = 1; j < 57; j++) {
-                if(scanner.hasNext()){
-                    String distance = scanner.next();
-                    System.out.println(distance);
-                    String[] partsDistance = distance.split(";");
-                    for (int k = 0; k < partsDistance.length; k++) {
-                        if (!(partsDistance[k].equals("0"))) {
-                            Node start = nodes.get(i);
-                            Node end = nodes.get(j);
-                            Edge edge = new Edge(Integer.parseInt(partsDistance[k]), start, end);
-                            start.addEdge(edge);
-                        }
+                for (int j = 1; j < row.length; j++) {
+
+                    if(!(row[j].equals("0"))){
+                        distance = row[j];
+                        start = i;
+                        end = j;
+                        Node node1 = new Node();
+                        node1.setNodeId(start);
+                        Node node2 = new Node();
+                        node2.setNodeId(end);
+                        Edge edge = new Edge(Integer.parseInt(distance), node1, node2);
+                        edges.add(edge);
+
+                        System.out.println(edge.toString());
                     }
                 }
             }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        scanner.close();
-
-        System.out.println(nodes.toString());
+        edges.forEach(System.out::println);
     }
 
     /**
@@ -109,32 +116,3 @@ public class Graph {
     }
 
 }
-
-//        List<Edge> edges = new ArrayList<>();
-//        String distance= null;
-//        int start;
-//        int end;
-//        try {
-//
-//            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(adjacencyMatrix.getAbsolutePath())));
-//            String[] firstRow = br.readLine().split(";");
-//            for (int i = 1; i < firstRow.length+1; i++) {
-//                for (int j = 0; j < firstRow.length+1; j++) {
-//                    String[] row = br.readLine().split(";");
-//                    if(!(row[j].equals("0"))){
-//                        distance = row[j];
-//                        start = i;
-//                        end = j;
-//                        Node node1 = new Node();
-//                        node1.setNodeId(start);
-//                        Node node2 = new Node();
-//                        node2.setNodeId(end);
-//                        Edge edge = new Edge(Integer.parseInt(distance), node1, node2);
-//                        edges.add(edge);
-//                    }
-//                }
-//            }
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }

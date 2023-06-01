@@ -21,6 +21,12 @@ public class Edge {
         return end.getNodeId();
     }
 
+    public String toString(){
+        return "Start: " + start.getNodeId() + " End: " + end.getNodeId() + " Distance: " + Integer.toString(distance);
+
+
+    }
+
 
     @Override
     public String toString() {
