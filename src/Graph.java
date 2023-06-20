@@ -47,7 +47,7 @@ public class Graph {
                         Edge edge = new Edge(Integer.parseInt(distance), node1, node2);
                         edges.add(edge);
 
-                        System.out.println(edge.toString());
+                        System.out.println(edge);
                     }
                 }
             }
