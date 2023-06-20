@@ -1,17 +1,19 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * @author Valentin Zahrhuber, Lukas Schneglberger
  */
 public class Graph {
 
+    Map values = new HashMap<Integer, Integer>();
+    List<Edge> edges = new ArrayList<>();
+    Map<Integer, Node> nodes = new HashMap<>();
     public Graph() {
 
     }
+
+
 
     /**
      * Reads a file that contains an adjacency matrix and stores it as a graph.
@@ -19,7 +21,7 @@ public class Graph {
      *@param adjacencyMatrix Graph as adjacency matrix.
      */
     public void read(File adjacencyMatrix) {
-        List<Edge> edges = new ArrayList<>();
+
         String distance= null;
         int start;
         int end;
@@ -56,11 +58,15 @@ public class Graph {
             throw new RuntimeException(e);
         }
 
-        edges.forEach(System.out::println);
     }
 
+
+
+
+
+
     /**
-     * Determines the shortest path between source nodeId and target nodeId an returns it
+     * Determines the shortest path between source nodeId and target nodeId and returns it
      * as path. The shortest path is defined as the path with the minimum sum of
      * edge weighs. If there is no path between the given nodeIds, the returned
      * path is empty (not null). If source and target nodeId are the same, the returned
@@ -71,8 +77,44 @@ public class Graph {
      * @return Shortest path
      */
     public Path determineShortestPath(int sourceNodeId, int targetNodeId) {
+        int[] shortestNode = determineNextShortestDistance(sourceNodeId);
+
+        values.put(shortestNode[0], shortestNode[1]);
+
+        for (Object keys : values.keySet())
+        {
+            System.out.println(keys);
+            System.out.println(values.get(keys));
+        }
+
         return new Path();
+
+
+
     }
+
+    public int[] determineNextShortestDistance(int nodeID){
+        int[] result = new int[2];
+        int nextShortestID = Integer.MAX_VALUE;
+        int shortestDistance = Integer.MAX_VALUE;
+        for (Edge e : edges) {
+            if(e.getFirstNodeId() == nodeID){
+                if(e.getDistance() < nextShortestID){
+                    nextShortestID = e.getSecondNodeId();
+                    shortestDistance = e.getDistance();
+                }
+            }
+        }
+
+        result[0] = nextShortestID;
+        result[1] = shortestDistance;
+        return result;
+
+    }
+
+
+
+
 
     /**
      * Determines the shortest path between source nodeId and target nodeId, considering

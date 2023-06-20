@@ -12,8 +12,8 @@ import java.util.List;
  * @author Valentin Zahrhuber, Lukas Schneglberger
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Node {
 
@@ -21,5 +21,7 @@ public class Node {
     private int nodeId;
 
 
-    
+    public Node(int nodeID) {
+        this.nodeId = nodeID;
+    }
 }
