@@ -8,7 +8,8 @@ public class Graph {
 
     Map values = new HashMap<Integer, Integer>();
     List<Edge> edges = new ArrayList<>();
-    Map<Integer, Node> nodes = new HashMap<>();
+
+    int distanceToEdge = 0;
     public Graph() {
 
     }
@@ -73,27 +74,26 @@ public class Graph {
      * path contains both nodeIds.
      *
      * @param sourceNodeId Node where the path starts.
-     * @param targetNodeId Node where the path ends.
+     * @param targetNodeId Node where the path eends.
      * @return Shortest path
      */
     public Path determineShortestPath(int sourceNodeId, int targetNodeId) {
-        int[] shortestNode = determineNextShortestDistance(sourceNodeId);
 
-        values.put(shortestNode[0], shortestNode[1]);
 
-        for (Object keys : values.keySet())
-        {
-            System.out.println(keys);
-            System.out.println(values.get(keys));
-        }
+            int[] shortestNode = determineNextShortestDistance(sourceNodeId);
+
+
+            for (Object keys : values.keySet()) {
+                System.out.println(keys);
+                System.out.println(values.get(keys));
+            }
 
         return new Path();
-
-
 
     }
 
     public int[] determineNextShortestDistance(int nodeID){
+
         int[] result = new int[2];
         int nextShortestID = Integer.MAX_VALUE;
         int shortestDistance = Integer.MAX_VALUE;
@@ -103,6 +103,9 @@ public class Graph {
                     nextShortestID = e.getSecondNodeId();
                     shortestDistance = e.getDistance();
                 }
+                if(e.getDistance() + distanceToEdge < values.)
+
+                values.put(e.getSecondNodeId(), e.getDistance());
             }
         }
 
@@ -110,6 +113,17 @@ public class Graph {
         result[1] = shortestDistance;
         return result;
 
+    }
+
+
+    public int countNeighbours(int edgeId){
+        int counter = 0;
+        for (Edge e : edges) {
+            if(e.getFirstNodeId() == edgeId){
+                counter++;
+            }
+        }
+        return counter;
     }
 
 
@@ -148,7 +162,7 @@ public class Graph {
      * Determines all edges that are used by the maximum flow and have a capacity of zero
      * (aka no weight) left. If there is no path between the given nodeIds, the
      * returned list is empty (not null).
-     * 
+     *
      * @param sourceNodeId ode where the flow starts.
      * @param targetNodeId Node where the flow ends.
      * @return List of edges with no capacity left
