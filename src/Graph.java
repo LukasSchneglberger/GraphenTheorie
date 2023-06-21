@@ -4,13 +4,13 @@ import java.util.*;
 /**
  * @author Valentin Zahrhuber, Lukas Schneglberger
  */
-public class Graph {
+public class Graph { //TODO unit-Test schreiben und 55er fehler ausbessern und determineShortestPath 2
 
     List<Node> nodes = new ArrayList<>();
 
     PriorityQueue<Node> queue = new PriorityQueue<>();
     HashMap<Integer, Integer> distance = new HashMap<>();
-    HashMap<Integer, Node> prev = new HashMap<>();
+    HashMap<Integer, Node> prev = new HashMap<>();//TODO prevs umbenennen
 
     public Graph() {
 
@@ -80,19 +80,21 @@ public class Graph {
      * @return Shortest path
      */
     public Path determineShortestPath(int sourceNodeId, int targetNodeId) {
-        for (Node n : nodes) {
-            distance.put(n.getNodeId(), Integer.MAX_VALUE);
-            prev.put(n.getNodeId(), null);
+        Path resultPath = new Path();
+
+        for (Node node : nodes) {
+            distance.put(node.getNodeId(), Integer.MAX_VALUE);
+            prev.put(node.getNodeId(), null);
         }
         Node start = findNode(sourceNodeId);
         distance.replace(start.getNodeId(), 0);
         queue.add(start);
 
-        while (!queue.isEmpty()) {
-            Node u = queue.poll();
-            for (Edge e : u.getEdges()) {
-                int v = e.getEnd();
-                int alt = distance.get(u.getNodeId()) + e.getDistance();
+        while (!(queue.isEmpty())) {
+            Node u = queue.poll(); //TODO umbenennen
+            for (Edge edge : u.getEdges()) {
+                int v = edge.getEnd();//TODO umbenennen
+                int alt = distance.get(u.getNodeId()) + edge.getDistance();//TODO umbenennen
                 if (alt < distance.get(v)) {
                     distance.replace(v, alt);
                     prev.replace(v, u);
@@ -103,18 +105,17 @@ public class Graph {
             }
         }
 
-        Path path = new Path();
         Node currentNode = findNode(targetNodeId);
         while (currentNode.getNodeId() != sourceNodeId) {
-            path.getNodes().add(0, currentNode.getNodeId());
+            resultPath.getNodes().add(0, currentNode.getNodeId());
             currentNode = prev.get(currentNode.getNodeId());
             if (currentNode == null) {
                 return new Path();
             }
         }
-        path.setPathLength(distance.get(targetNodeId));
-        path.getNodes().add(0, sourceNodeId);
-        return path;
+        resultPath.setPathLength(distance.get(targetNodeId));
+        resultPath.getNodes().add(0, sourceNodeId);
+        return resultPath;
     }
 
     private Node findNode(int nodeId) {
