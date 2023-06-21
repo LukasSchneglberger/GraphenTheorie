@@ -6,15 +6,11 @@ import java.util.*;
  */
 public class Graph {
 
-    Map values = new HashMap<Integer, Integer>();
-    List<Edge> edges = new ArrayList<>();
+    List<Node> nodes = new ArrayList<>();
 
-    int distanceToEdge = 0;
     public Graph() {
 
     }
-
-
 
     /**
      * Reads a file that contains an adjacency matrix and stores it as a graph.
@@ -22,49 +18,51 @@ public class Graph {
      *@param adjacencyMatrix Graph as adjacency matrix.
      */
     public void read(File adjacencyMatrix) {
-
-        String distance= null;
-        int start;
-        int end;
         try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(adjacencyMatrix)));
+            br.readLine();
+            int lineIndex = 1;
+            String line;
+            while (true) {
+                line = br.readLine();
+                if (line != null) {
+                    String[] parts = line.split(";");
+                    for (int i = 1; i < parts.length; i++) {
+                        int pathLength = Integer.parseInt(parts[i]);
+                        if (pathLength != 0) {
+                            boolean isNode1 = false;
+                            boolean isNode2 = false;
+                            Edge edge = new Edge(pathLength, lineIndex, i);
+                            Node fromNode = new Node(new ArrayList<>(List.of(edge)), lineIndex);
+                            Node toNode = new Node(new ArrayList<>(), i);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(adjacencyMatrix.getAbsolutePath())));
-            String[] firstRow = br.readLine().split(";");
-            for (int i = 1; i < firstRow.length+1; i++) {
-                String line = br.readLine();
-                if(line == null) {
-                    return;
-                }
-                String[] row = line.split(";");
+                            for (Node node : nodes) {
+                                if (node.getNodeId() == fromNode.getNodeId()) {
+                                    node.getEdges().add(edge);
+                                    isNode1 = true;
+                                }
+                                if (node.getNodeId() == toNode.getNodeId()) {
+                                    isNode2 = true;
+                                }
+                            }
 
-                for (int j = 1; j < row.length; j++) {
-
-                    if(!(row[j].equals("0"))){
-                        distance = row[j];
-                        start = i;
-                        end = j;
-                        Node node1 = new Node();
-                        node1.setNodeId(start);
-                        Node node2 = new Node();
-                        node2.setNodeId(end);
-                        Edge edge = new Edge(Integer.parseInt(distance), node1, node2);
-                        edges.add(edge);
-
-                        System.out.println(edge);
+                            if(!isNode1) {
+                                nodes.add(fromNode);
+                            }
+                            if(!isNode2) {
+                                nodes.add(toNode);
+                            }
+                        }
                     }
+                } else {
+                    break;
                 }
+                lineIndex++;
             }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
-
-
-
-
-
 
     /**
      * Determines the shortest path between source nodeId and target nodeId and returns it
@@ -78,57 +76,56 @@ public class Graph {
      * @return Shortest path
      */
     public Path determineShortestPath(int sourceNodeId, int targetNodeId) {
+        PriorityQueue<Node> queue = new PriorityQueue<>();
+        HashMap<Integer, Integer> dist = new HashMap<>();
+        HashMap<Integer, Node> prev = new HashMap<>();
+        for (Node n : nodes) {
+            dist.put(n.getNodeId(), Integer.MAX_VALUE);
+            prev.put(n.getNodeId(), null);
+        }
+        //setze den Startknoten und dessen Distanz
+        Node start = findNode(sourceNodeId);
+        dist.replace(start.getNodeId(), 0);
+        queue.add(start);
 
-
-            int[] shortestNode = determineNextShortestDistance(sourceNodeId);
-
-
-            for (Object keys : values.keySet()) {
-                System.out.println(keys);
-                System.out.println(values.get(keys));
-            }
-
-        return new Path();
-
-    }
-
-    public int[] determineNextShortestDistance(int nodeID){
-
-        int[] result = new int[2];
-        int nextShortestID = Integer.MAX_VALUE;
-        int shortestDistance = Integer.MAX_VALUE;
-        for (Edge e : edges) {
-            if(e.getFirstNodeId() == nodeID){
-                if(e.getDistance() < nextShortestID){
-                    nextShortestID = e.getSecondNodeId();
-                    shortestDistance = e.getDistance();
+        while (!queue.isEmpty()) {
+            Node u = queue.poll();
+            for (Edge e : u.getEdges()) {
+                int v = e.getEnd();
+                int alt = dist.get(u.getNodeId()) + e.getDistance();
+                if (alt < dist.get(v)) {
+                    dist.replace(v, alt);
+                    prev.replace(v, u);
+                    //next line
+                    Node nodeToAdd = findNode(v);
+                    queue.add(nodeToAdd);
                 }
-                if(e.getDistance() + distanceToEdge < values.)
-
-                values.put(e.getSecondNodeId(), e.getDistance());
             }
         }
-
-        result[0] = nextShortestID;
-        result[1] = shortestDistance;
-        return result;
-
-    }
-
-
-    public int countNeighbours(int edgeId){
-        int counter = 0;
-        for (Edge e : edges) {
-            if(e.getFirstNodeId() == edgeId){
-                counter++;
+        // Erstelle den Pfad
+        Path path = new Path();
+        Node current = findNode(targetNodeId);
+        while (current.getNodeId() != sourceNodeId) {
+            path.getNodes().add(0, current.getNodeId());
+            //path.addToPathLengthSum(dist.get(current.getNodeId()));
+            current = prev.get(current.getNodeId());
+            if (current == null) {
+                return new Path();
             }
         }
-        return counter;
+        path.setPathLength(dist.get(targetNodeId));
+        path.getNodes().add(0, sourceNodeId);
+        return path;
     }
 
-
-
-
+    private Node findNode(int nodeId) {
+        for (Node node : nodes) {
+            if (node.getNodeId() == nodeId) {
+                return node;
+            }
+        }
+        return null;
+    }
 
     /**
      * Determines the shortest path between source nodeId and target nodeId, considering

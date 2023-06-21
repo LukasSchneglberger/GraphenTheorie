@@ -12,16 +12,16 @@ import java.util.List;
  * @author Valentin Zahrhuber, Lukas Schneglberger
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
-public class Node {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Node implements Comparable<Node> {
 
     private List<Edge> edges;
     private int nodeId;
 
-
-    public Node(int nodeID) {
-        this.nodeId = nodeID;
+    @Override
+    public int compareTo(Node o) {
+        return this.getNodeId() - o.getNodeId();
     }
 }

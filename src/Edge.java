@@ -1,39 +1,24 @@
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/*
+import java.util.Objects;
+
+/**
  * @author Valentin Zahrhuber, Lukas Schneglberger
  */
 @Data
 @AllArgsConstructor
-public class Edge {
+@NoArgsConstructor
+public class Edge implements Comparable<Edge> {
 
     private int distance;
-    private Node start;
-    private Node end;
-    
-    public int getFirstNodeId() {
-        return start.getNodeId();
-    }
-    
-    public int getSecondNodeId() {
-        return end.getNodeId();
-    }
-
-    public String toString(){
-        return "Start: " + start.getNodeId() + " End: " + end.getNodeId() + " Distance: " + Integer.toString(distance);
-
-
-    }
-
+    private int start;
+    private int end;
 
     @Override
-    public String toString() {
-        return "Edge{" +
-                "distance=" + distance +
-                ", start=" + start.getNodeId() +
-                ", end=" + end.getNodeId() +
-                '}';
+    public int compareTo(Edge o) {
+        return this.distance - o.distance;
     }
 }
