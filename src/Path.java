@@ -2,6 +2,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Valentin Zahrhuber, Lukas Schneglberger
@@ -20,13 +21,11 @@ public class Path {
      * @return Path as nodeId array
      */
     public int[] getNodeIds() {
-        //If there is no path, the returned array is empty (not null)
         if (nodes.size() < 1) {
             return new int[]{};
         }
 
-        //If source and target nodeId are the same, the returned path contains both nodeIds
-        if (nodes.get(0) == nodes.get(nodes.size() - 1)) {
+        if (Objects.equals(nodes.get(0), nodes.get(nodes.size() - 1))) {
             return new int[]{
                     nodes.get(0),
                     nodes.get(nodes.size() - 1)
@@ -48,8 +47,12 @@ public class Path {
      * @return Path's weight
      */
     public double computeWeight() {
-        if (nodes.size() < 1) return -1;
-        else if (nodes.get(0) == nodes.get(nodes.size() - 1)) return 0;
+        if (nodes.size() < 1){
+            return -1;
+        }
+        else if (Objects.equals(nodes.get(0), nodes.get(nodes.size() - 1))) {
+            return 0;
+        }
         else return pathLength;
     }
 

@@ -8,6 +8,10 @@ public class Graph {
 
     List<Node> nodes = new ArrayList<>();
 
+    PriorityQueue<Node> queue = new PriorityQueue<>();
+    HashMap<Integer, Integer> distance = new HashMap<>();
+    HashMap<Integer, Node> prev = new HashMap<>();
+
     public Graph() {
 
     }
@@ -76,44 +80,39 @@ public class Graph {
      * @return Shortest path
      */
     public Path determineShortestPath(int sourceNodeId, int targetNodeId) {
-        PriorityQueue<Node> queue = new PriorityQueue<>();
-        HashMap<Integer, Integer> dist = new HashMap<>();
-        HashMap<Integer, Node> prev = new HashMap<>();
         for (Node n : nodes) {
-            dist.put(n.getNodeId(), Integer.MAX_VALUE);
+            distance.put(n.getNodeId(), Integer.MAX_VALUE);
             prev.put(n.getNodeId(), null);
         }
-        //setze den Startknoten und dessen Distanz
         Node start = findNode(sourceNodeId);
-        dist.replace(start.getNodeId(), 0);
+        distance.replace(start.getNodeId(), 0);
         queue.add(start);
 
         while (!queue.isEmpty()) {
             Node u = queue.poll();
             for (Edge e : u.getEdges()) {
                 int v = e.getEnd();
-                int alt = dist.get(u.getNodeId()) + e.getDistance();
-                if (alt < dist.get(v)) {
-                    dist.replace(v, alt);
+                int alt = distance.get(u.getNodeId()) + e.getDistance();
+                if (alt < distance.get(v)) {
+                    distance.replace(v, alt);
                     prev.replace(v, u);
-                    //next line
+
                     Node nodeToAdd = findNode(v);
                     queue.add(nodeToAdd);
                 }
             }
         }
-        // Erstelle den Pfad
+
         Path path = new Path();
-        Node current = findNode(targetNodeId);
-        while (current.getNodeId() != sourceNodeId) {
-            path.getNodes().add(0, current.getNodeId());
-            //path.addToPathLengthSum(dist.get(current.getNodeId()));
-            current = prev.get(current.getNodeId());
-            if (current == null) {
+        Node currentNode = findNode(targetNodeId);
+        while (currentNode.getNodeId() != sourceNodeId) {
+            path.getNodes().add(0, currentNode.getNodeId());
+            currentNode = prev.get(currentNode.getNodeId());
+            if (currentNode == null) {
                 return new Path();
             }
         }
-        path.setPathLength(dist.get(targetNodeId));
+        path.setPathLength(distance.get(targetNodeId));
         path.getNodes().add(0, sourceNodeId);
         return path;
     }
