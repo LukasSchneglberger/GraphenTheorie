@@ -1,20 +1,21 @@
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.*;
 import java.util.*;
 
 /**
  * @author Valentin Zahrhuber, Lukas Schneglberger
  */
-public class Graph { //TODO unit-Test schreiben und 55er fehler ausbessern und determineShortestPath 2
+@Data
+@NoArgsConstructor
+public class Graph { //TODO unit-Test schreiben und determineShortestPath 2
 
     List<Node> nodes = new ArrayList<>();
 
     PriorityQueue<Node> queue = new PriorityQueue<>();
     HashMap<Integer, Integer> distance = new HashMap<>();
     HashMap<Integer, Node> prev = new HashMap<>();//TODO prevs umbenennen
-
-    public Graph() {
-
-    }
 
     /**
      * Reads a file that contains an adjacency matrix and stores it as a graph.
@@ -81,6 +82,14 @@ public class Graph { //TODO unit-Test schreiben und 55er fehler ausbessern und d
      */
     public Path determineShortestPath(int sourceNodeId, int targetNodeId) {
         Path resultPath = new Path();
+
+        List<Integer> allNodeIds = new ArrayList<>();
+        for (Node node: nodes) {
+            allNodeIds.add(node.getNodeId());
+        }
+        if(!allNodeIds.contains(targetNodeId)){
+            return new Path();
+        }
 
         for (Node node : nodes) {
             distance.put(node.getNodeId(), Integer.MAX_VALUE);
