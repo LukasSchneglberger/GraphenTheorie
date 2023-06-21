@@ -3,19 +3,21 @@ import lombok.NoArgsConstructor;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Valentin Zahrhuber, Lukas Schneglberger
  */
 @Data
 @NoArgsConstructor
-public class Graph { //TODO unit-Test schreiben und determineShortestPath 2
+public class Graph {
 
     List<Node> nodes = new ArrayList<>();
 
-    PriorityQueue<Node> queue = new PriorityQueue<>();
+    PriorityQueue<Node> ranking = new PriorityQueue<>();
     HashMap<Integer, Integer> distance = new HashMap<>();
-    HashMap<Integer, Node> prev = new HashMap<>();//TODO prevs umbenennen
+    HashMap<Integer, Node> map = new HashMap<>();
 
     /**
      * Reads a file that contains an adjacency matrix and stores it as a graph.
@@ -96,23 +98,23 @@ public class Graph { //TODO unit-Test schreiben und determineShortestPath 2
 
         for (Node node : nodes) {
             distance.put(node.getNodeId(), Integer.MAX_VALUE);
-            prev.put(node.getNodeId(), null);
+            map.put(node.getNodeId(), null);
         }
         Node start = findNode(sourceNodeId);
         distance.replace(start.getNodeId(), 0);
-        queue.add(start);
+        ranking.add(start);
 
-        while (!(queue.isEmpty())) {
-            Node u = queue.poll(); //TODO umbenennen
+        while (!(ranking.isEmpty())) {
+            Node u = ranking.poll();
             for (Edge edge : u.getEdges()) {
-                int v = edge.getEnd();//TODO umbenennen
-                int alt = distance.get(u.getNodeId()) + edge.getDistance();//TODO umbenennen
-                if (alt < distance.get(v)) {
-                    distance.replace(v, alt);
-                    prev.replace(v, u);
+                int end = edge.getEnd();
+                int or = distance.get(u.getNodeId()) + edge.getDistance();
+                if (or < distance.get(end)) {
+                    distance.replace(end, or);
+                    map.replace(end, u);
 
-                    Node nodeToAdd = findNode(v);
-                    queue.add(nodeToAdd);
+                    Node nodeToAdd = findNode(end);
+                    ranking.add(nodeToAdd);
                 }
             }
         }
@@ -120,13 +122,16 @@ public class Graph { //TODO unit-Test schreiben und determineShortestPath 2
         Node currentNode = findNode(targetNodeId);
         while (currentNode.getNodeId() != sourceNodeId) {
             resultPath.getNodes().add(0, currentNode.getNodeId());
-            currentNode = prev.get(currentNode.getNodeId());
+            currentNode = map.get(currentNode.getNodeId());
             if (currentNode == null) {
                 return new Path();
             }
         }
         resultPath.setPathLength(distance.get(targetNodeId));
         resultPath.getNodes().add(0, sourceNodeId);
+
+
+
         return resultPath;
     }
 
@@ -152,9 +157,29 @@ public class Graph { //TODO unit-Test schreiben und determineShortestPath 2
      * @return Shortest path
      */
     public Path determineShortestPath(int sourceNodeId, int targetNodeId, int... viaNodeIds) {
-        return new Path();
-    }
+        Path result = new Path();
+        int length = 0;
+        for (int i = 0; i < viaNodeIds.length; i++) {
+            Path temp = determineShortestPath(sourceNodeId, viaNodeIds[i]);
+            if(!Objects.equals(temp, new Path())) {
+                length += temp.getPathLength();
 
+                result.nodes.addAll(temp.getNodes());
+                sourceNodeId = viaNodeIds[i];
+            }else {
+                return new Path();
+            }
+        }
+
+        result.setPathLength(length);
+
+
+        Path targetPath = determineShortestPath(viaNodeIds[viaNodeIds.length - 1], targetNodeId);
+        List<Integer> subList = targetPath.getNodes().subList(1, targetPath.getNodes().size());
+        result.nodes.addAll(subList);
+
+        return result;
+    }
     /**
      * Determines the maximum flow between source nodeId and target nodeId. The maximum
      * flow is defined as the maximum weight sum of all possible paths.

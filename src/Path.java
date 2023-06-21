@@ -10,7 +10,7 @@ import java.util.Objects;
 @Data
 public class Path {
 
-    private List<Integer> nodes = new ArrayList<>();
+    public List<Integer> nodes = new ArrayList<>();
     private int pathLength = 0;
 
     /**

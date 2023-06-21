@@ -9,7 +9,9 @@ public class Main {
         Graph graph = new Graph();
         graph.read(new File("Linz_Suchproblem.csv"));
 
-        Path path = graph.determineShortestPath(28, 7);
+        int[] valuesVia = {21, 45, 50};
+
+        Path path = graph.determineShortestPath(28, 30, 25);
         System.out.println("Start:");
         for (int nodeId : path.getNodeIds()) {
             System.out.print(nodeId + " ");
