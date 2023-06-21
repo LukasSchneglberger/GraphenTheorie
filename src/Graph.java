@@ -90,6 +90,9 @@ public class Graph { //TODO unit-Test schreiben und determineShortestPath 2
         if(!allNodeIds.contains(targetNodeId)){
             return new Path();
         }
+        if(!allNodeIds.contains(sourceNodeId)){
+            return new Path();
+        }
 
         for (Node node : nodes) {
             distance.put(node.getNodeId(), Integer.MAX_VALUE);
